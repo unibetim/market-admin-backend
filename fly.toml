@@ -1,0 +1,86 @@
+# fly.toml - OddsMarket Admin Backend 配置
+app = "oddsmarket-admin"
+primary_region = "hkg"  # 香港区域，离中国最近
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[build]
+  builder = "heroku/buildpacks:20"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+  
+  # 数据库配置
+  DB_PATH = "/data/markets.sqlite"
+  
+  # 区块链配置
+  BSC_TESTNET_RPC = "https://data-seed-prebsc-1-s1.binance.org:8545/"
+  BSC_MAINNET_RPC = "https://bsc-dataseed1.binance.org/"
+  ODDSMARKET_CONTRACT_ADDRESS = "0x43D802f4E2057E49F425A3266E9DE66FB5ae29b9"
+  DEFAULT_CHAIN_ID = "97"
+  
+  # IPFS配置
+  IPFS_GATEWAY_PRIMARY = "https://ipfs.io/ipfs/"
+  IPFS_GATEWAY_BACKUP = "https://cloudflare-ipfs.com/ipfs/"
+  
+  # 上传配置
+  UPLOAD_MAX_SIZE = "5242880"
+  UPLOAD_ALLOWED_TYPES = "image/jpeg,image/png,image/svg+xml,image/webp"
+  
+  # API配置
+  API_RATE_LIMIT = "100"
+  API_WINDOW_MS = "900000"
+
+# 持久化存储卷配置
+[mounts]
+  source = "oddsmarket_data"
+  destination = "/data"
+
+# HTTP 服务配置
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+    
+  [[services.http_checks]]
+    interval = "10s"
+    timeout = "2s"
+    grace_period = "5s"
+    method = "GET"
+    path = "/api/health"
+    
+  # 自动扩缩容配置
+  [[services.autoscaling]]
+    min_machines_running = 1
+    max_machines_running = 3
+    
+    # 当 CPU 使用率超过 80% 时扩容
+    [[services.autoscaling.metrics]]
+      source = "cpu"
+      target = 80
+      
+    # 当内存使用率超过 80% 时扩容  
+    [[services.autoscaling.metrics]]
+      source = "memory"
+      target = 80
+
+# 进程配置
+[processes]
+  app = "node server.js"
+
+# 部署策略
+[deploy]
+  strategy = "rolling"  # 滚动更新，零停机时间
