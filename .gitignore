@@ -1,0 +1,71 @@
+# 🔒 敏感信息 - 绝对不能提交
+.env
+.env.local
+.env.production
+.env.development
+*.key
+private_key*
+secrets*
+config/secrets*
+
+# 🗃️ 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+data/
+admin.db
+src/database/*.db
+
+# 📦 依赖和构建文件
+node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 🏗️ 构建输出
+build/
+dist/
+coverage/
+admin-ui/build/
+
+# 📊 日志文件
+*.log
+server.log
+logs/
+
+# 🖥️ 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# 💻 IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 🚀 部署平台
+.vercel/
+.railway/
+railway.json
+nixpacks.toml
+
+# 📁 上传文件
+uploads/
+temp/
+tmp/
+
+# 🧪 测试文件
+test-*.js
+*.test.js
+*.spec.js
+
+# 📋 临时和备份文件
+*.bak
+*.tmp
+*~
+.backup/
